@@ -59,7 +59,7 @@ export default {
 .top {
   height: 265px;
   background: url(../../assets/home/banner.png) no-repeat;
-  background-size:100%;
+  background-size:100% 265px;
 }
 .users {
   display: flex;

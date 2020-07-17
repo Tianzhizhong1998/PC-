@@ -10,4 +10,11 @@ export const incrementHumanitiesViewNumber = params => get('http://192.168.5.53:
 
 export const operateLikesNumber = params => get('http://192.168.5.53:8600/ideo-subject/subject/humanities/operateLikesNumber/f2ef3d47bc5d452e8816c1e38a71e70f', params);
 
+//登录
+export const doLogin = params => post('http://192.168.5.53:8600/ideo-user/security/doLogin', params);
+
+//生成验证码接口
+export const generateCaptcha = params => get('http://192.168.5.53:8600/ideo-user/user/generateCaptcha', params);
+
+
 

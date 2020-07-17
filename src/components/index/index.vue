@@ -4,7 +4,10 @@
       <div class="viedo"></div>
       <div class="Courseoverview">
         <span>survey</span>
-        <div class="title">课程概况</div>
+        <div class="title">
+          课程概况
+          <img src="../../assets/home/huan.png" alt />
+        </div>
         <p>阐明马克思主义哲学是科学的世界观和方法论，讲述辩证唯物主义和历史唯物主义基本观点及其对人生成长的意义；阐述社会生活及个人成长中进行正确价值判断和行为选择的意义；引导学生弘扬和践行社会主义核心价值观，为学生成长奠定正确的世界观、人生观和价值观基础。</p>
         <ul>
           <li>
@@ -45,25 +48,26 @@
         <div class="see">-- 点击查看 --</div>
       </div>
       <div class="teach1">
-        <div class="curriculum">课程学习</div>
+        <div class="curriculum">教学策略</div>
         <div class="see">-- 点击查看 --</div>
       </div>
       <div class="teach2">
-        <div class="curriculum">课程学习</div>
+        <div class="curriculum">教学成效</div>
         <div class="see">-- 点击查看 --</div>
       </div>
       <div class="teach3">
-        <div class="curriculum">课程学习</div>
+        <div class="curriculum">教学分析</div>
         <div class="see">-- 点击查看 --</div>
       </div>
     </div>
     <!-- 人文科学 -->
     <div class="humanities">
       <div class="top">
-        <div class="hun">humanities</div>
+        <div class="hun">HUMANITIES</div>
         <div class="ren">
           人文科学
           <span>(智库)</span>
+           <img src="../../assets/home/huan.png" alt />
         </div>
       </div>
       <div class="center">
@@ -81,6 +85,7 @@
             <div class="classmaterelationship">
               <img src="../../assets/home/tong.png" alt @click="handleVideo" />
               <p>{{viedo}}</p>
+              <div class="bai"></div>
               <div class="look">
                 <div class="yan">
                   <img src="../../assets/home/yan.png" alt />
@@ -141,10 +146,50 @@
               </li>
             </ul>-->
           </div>
-          <div class="demo2" v-if="1 == tabNum">2222</div>
-          <div class="demo2" v-if="2 == tabNum">333</div>
-          <div class="demo2" v-if="3 == tabNum">1111</div>
-          <div class="demo2" v-if="4 == tabNum">2222</div>
+          <div class="demo2" v-if="1 == tabNum">
+            <ul class="left">
+              <li v-for="(item,index) in peopeList" :key="index">
+                {{item.title}}
+                <div class="huo">
+                  <img src="../../assets/home/huo.png" alt v-if="huo" />
+                </div>
+                <span>{{item.createDate}}</span>
+              </li>
+            </ul>
+          </div>
+          <div class="demo2" v-if="2 == tabNum">
+            <ul class="left">
+              <li v-for="(item,index) in peopeList" :key="index">
+                {{item.title}}
+                <div class="huo">
+                  <img src="../../assets/home/huo.png" alt v-if="huo" />
+                </div>
+                <span>{{item.createDate}}</span>
+              </li>
+            </ul>
+          </div>
+          <div class="demo2" v-if="3 == tabNum">
+            <ul class="left">
+              <li v-for="(item,index) in peopeList" :key="index">
+                {{item.title}}
+                <div class="huo">
+                  <img src="../../assets/home/huo.png" alt v-if="huo" />
+                </div>
+                <span>{{item.createDate}}</span>
+              </li>
+            </ul>
+          </div>
+          <div class="demo2" v-if="4 == tabNum">
+            <ul class="left">
+              <li v-for="(item,index) in peopeList" :key="index">
+                {{item.title}}
+                <div class="huo">
+                  <img src="../../assets/home/huo.png" alt v-if="huo" />
+                </div>
+                <span>{{item.createDate}}</span>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -237,7 +282,12 @@
 </template>
 
 <script>
-import { getTypeDic, humanities,incrementHumanitiesViewNumber,operateLikesNumber } from "../../api";
+import {
+  getTypeDic,
+  humanities,
+  incrementHumanitiesViewNumber,
+  operateLikesNumber
+} from "../../api";
 export default {
   name: "homepage",
   data() {
@@ -254,18 +304,20 @@ export default {
       peopeList: [],
       huo: false,
       videoList: {},
-      viedo:"",
-      viewNumber:"",
-      createDate:"",
-      content:"",
-      isCollect:"",
-      videoListId:""
+      viedo: "",
+      viewNumber: "",
+      createDate: "",
+      content: "",
+      isCollect: "",
+      videoListId: ""
     };
   },
   created() {
     this.getTypeDic();
-    this.humanities();
-    this.incrementHumanitiesViewNumber()
+    setTimeout(() => {
+      this.humanities();
+    }, 1000);
+    this.incrementHumanitiesViewNumber();
   },
   methods: {
     //视频跳转
@@ -294,11 +346,11 @@ export default {
       }
       humanities({
         typeId: this.humanitiesId,
-        limit:6
+        limit: 6
       })
         .then(res => {
           this.videoList = res.data.videoData;
-            console.log(this.videoList[0].title) 
+          console.log(this.videoList[0].title);
           this.peopeList = res.data.otherData;
         })
         .catch(err => {
@@ -306,12 +358,11 @@ export default {
         });
     },
     handleLike() {
-      this.operateLikesNumber()
-         this.like = true;
-
+      this.operateLikesNumber();
+      this.like = true;
     },
     handleLike1() {
-      this.operateLikesNumber()
+      this.operateLikesNumber();
       this.like = false;
     },
     //查询各个课程下的模块所属类型接口
@@ -331,35 +382,35 @@ export default {
     },
     humanities() {
       humanities({
-        typeId: "aac9c451e74b45fdb214d04766fa5f0c",
-        limit:6
+        typeId: this.lifeeducation,
+        limit: 6
       })
         .then(res => {
           this.videoList = res.data.videoData;
-          this.videoListId = this.videoList[0].id
-          console.log(this.videoListId)
-          this.viedo = this.videoList[0].title
-          this.viewNumber = this.videoList[0].viewNumber
+          this.videoListId = this.videoList[0].id;
+          console.log(this.videoListId);
+          this.viedo = this.videoList[0].title;
+          this.viewNumber = this.videoList[0].viewNumber;
           this.peopeList = res.data.otherData;
-          this.createDate = this.videoList[0].createDate
-          this.content = this.videoList[0].content
-          this.isCollect = this.videoList[0].isCollect
+          this.createDate = this.videoList[0].createDate;
+          this.content = this.videoList[0].content;
+          this.isCollect = this.videoList[0].isCollect;
         })
         .catch(err => {
           console.log(err);
         });
     },
-    incrementHumanitiesViewNumber(){
+    incrementHumanitiesViewNumber() {
       incrementHumanitiesViewNumber({
-         id:'f2ef3d47bc5d452e8816c1e38a71e70f'
-      }).then(res=>{
-        console.log(res)
-      })
+        id: this.videoListId
+      }).then(res => {
+        console.log(res);
+      });
     },
-    operateLikesNumber(){
-      operateLikesNumber({}).then(res=>{
-        console.log(res)
-      })
+    operateLikesNumber() {
+      operateLikesNumber({}).then(res => {
+        console.log(res);
+      });
     }
   }
 };
@@ -391,12 +442,19 @@ export default {
   color: rgba(206, 206, 206, 1);
 }
 .Courseoverview .title {
+  display: flex;
   font-size: 24px;
   font-family: Microsoft YaHei;
   font-weight: bold;
   color: rgba(0, 0, 0, 1);
   line-height: 26px;
   margin-top: 25px;
+}
+.Courseoverview .title img{
+  width:43px;
+  height:13px;
+  margin-top:7px;
+  margin-left:3px;
 }
 .Courseoverview p {
   text-indent: 2em;
@@ -421,8 +479,7 @@ export default {
   margin-left: 8px;
 }
 .Courseoverview ul li:nth-child(1) {
-  background: rgba(110, 223, 210, 1);
-  opacity: 0.23;
+  background: rgba(110, 223, 210, 0.23);
 }
 .Courseoverview ul {
   position: relative;
@@ -500,21 +557,31 @@ export default {
   height: 70px;
 }
 .humanities .top .hun {
-  position: absolute;
   font-size: 29px;
   font-family: FZHuPo-M04S;
   font-weight: 400;
   color: rgba(206, 206, 206, 1);
 }
 .humanities .top .ren {
-  padding-top: 18px;
+  position: absolute;
+  display: flex;
+  margin-top:-25px;
   font-size: 24px;
   font-family: Microsoft YaHei;
   font-weight: bold;
   color: rgba(0, 0, 0, 1);
+  z-index:99;
 }
 .humanities .top .ren span {
   font-size: 18px;
+  margin-top:10px;
+  margin-left:5px;
+}
+.humanities .top .ren img{
+   width:43px;
+   height:13px;
+   margin-top:20px;
+   margin-left:5px;
 }
 .humanities .center {
   display: flex;
@@ -535,12 +602,20 @@ export default {
   color: rgba(255, 255, 255, 1);
   margin-left: 17px;
   margin-top: 20px;
+  margin-bottom: 18px;
+}
+.humanities .center .classmaterelationship .bai {
+  width: 40px;
+  height: 1px;
+  background: rgba(255, 255, 255, 1);
+  margin-left: 15px;
 }
 .humanities .center .classmaterelationship .look {
   display: flex;
   justify-content: space-around;
   align-items: center;
   color: #fff;
+  margin-top: 13px;
 }
 .humanities .center .classmaterelationship .look img {
   width: 17px;
@@ -550,9 +625,15 @@ export default {
   display: flex;
   align-items: center;
 }
+.humanities .center .classmaterelationship .look .yan span {
+  margin-left: 3px;
+}
 .humanities .center .classmaterelationship .look .ping {
   display: flex;
   align-items: center;
+}
+.humanities .center .classmaterelationship .look .ping span {
+  margin-left: 3px;
 }
 .humanities .center .classmaterelationship .look .xi {
   display: flex;
@@ -571,19 +652,21 @@ export default {
   color: rgba(0, 73, 78, 1);
 }
 .humanities .center .tab {
+  position: relative;
   width: 75%;
   height: 324px;
   margin-left: 4px;
   background: rgba(248, 248, 248, 1);
 }
 .list {
-  margin-top: -50px;
-  margin-left: 328px;
+  position: absolute;
+  top: -40px;
+  left: 730px;
 }
 .demo1 {
   float: left;
   margin-left: 28px;
-  padding: 10px;
+  padding: 2px;
   line-height: 28px;
   cursor: pointer;
 }
@@ -596,7 +679,6 @@ export default {
 .demo2 {
   display: flex;
   position: relative;
-  margin-top: 50px;
   padding-left: 10px;
 }
 .demo2 .left {
