@@ -8,6 +8,7 @@ import store from '@/store/index';
 axios.defaults.timeout = 10000
 //post请求头的设置
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
+
 //请求拦截
 axios.interceptors.request.use(
     config => {
@@ -37,6 +38,7 @@ axios.interceptors.response.use(
     // 然后根据返回的状态码进行一些操作，例如登录过期提示，错误提示等等
     // 下面列举几个常见的操作，其他需求可自行扩展
     error => {
+        const that = this
         if (error.response.status) {
             switch (error.response.status) {
                 // 401: 未登录
@@ -56,7 +58,7 @@ axios.interceptors.response.use(
                 // 清除本地token和清空vuex中token对象
                 // 跳转登录页面
                 case 403:
-                    this.$message({
+                    that.$message({
                         message: '登录过期，请重新登录',
                         duration: 1000,
                         forbidClick: true
@@ -77,7 +79,7 @@ axios.interceptors.response.use(
 
                 // 404请求不存在
                 case 404:
-                    this.$message({
+                    that.$message({
                         message: '网络请求不存在',
                         duration: 1500,
                         forbidClick: true
@@ -85,7 +87,7 @@ axios.interceptors.response.use(
                     break;
                 // 其他错误，直接抛出错误提示
                 default:
-                    this.$message({
+                    that.$message({
                         message: error.response.data.message,
                         duration: 1500,
                         forbidClick: true

@@ -1,15 +1,28 @@
 <template>
   <div class="homepage">
+    <div>
     <div class="details">
-      <div class="viedo"></div>
+      <div class="viedo">
+        <!-- source 封面背景 -->
+        <video
+          id="myVideo"
+          class="video-js vjs-default-skin vjs-big-play-centered"
+          controls
+          preload="auto"
+          poster
+        >
+          <source src type="video/mp4" />
+        </video>
+      </div>
       <div class="Courseoverview">
         <span>survey</span>
         <div class="title">
           课程概况
           <img src="../../assets/home/huan.png" alt />
         </div>
-        <p>阐明马克思主义哲学是科学的世界观和方法论，讲述辩证唯物主义和历史唯物主义基本观点及其对人生成长的意义；阐述社会生活及个人成长中进行正确价值判断和行为选择的意义；引导学生弘扬和践行社会主义核心价值观，为学生成长奠定正确的世界观、人生观和价值观基础。</p>
-        <ul>
+        <p @click="handleDetail">{{description}}</p>
+        <!-- <p>阐明马克思主义哲学是科学的世界观和方法论，讲述辩证唯物主义和历史唯物主义基本观点及其对人生成长的意义；阐述社会生活及个人成长中进行正确价值判断和行为选择的意义；引导学生弘扬和践行社会主义核心价值观，为学生成长奠定正确的世界观、人生观和价值观基础。</p>  -->
+        <!-- <ul>
           <li>
             <div class="disc"></div>
             <div class="cont">第一章 立足客观实际，树立人生理想</div>
@@ -38,7 +51,7 @@
               <i class="el-icon-reading"></i>学习
             </a>
           </li>
-        </ul>
+        </ul>-->
       </div>
     </div>
     <!-- 教学查看 -->
@@ -67,7 +80,7 @@
         <div class="ren">
           人文科学
           <span>(智库)</span>
-           <img src="../../assets/home/huan.png" alt />
+          <img src="../../assets/home/huan.png" alt />
         </div>
       </div>
       <div class="center">
@@ -83,7 +96,18 @@
           </div>
           <div class="demo2" v-if="0 == tabNum">
             <div class="classmaterelationship">
-              <img src="../../assets/home/tong.png" alt @click="handleVideo" />
+              <div class="video1">
+                <video
+                  id="myVideo"
+                  class="video-js vjs-default-skin vjs-big-play-centered"
+                  preload="auto"
+                  autoplay="muted"
+                  poster="../../assets/home/tong.png"
+                  @click="handleVideo"
+                >
+                  <source src type="video/mp4" />
+                </video>
+              </div>
               <p>{{viedo}}</p>
               <div class="bai"></div>
               <div class="look">
@@ -200,7 +224,7 @@
         <img src="../../assets/home/yuan.png" alt />
         弘道求真
         <img src="../../assets/home/yuan.png" alt />
-        <div class="xian"></div>
+        <div class="xian1"></div>
       </div>
       <div class="new">
         <div>
@@ -277,7 +301,7 @@
         </div>
       </div>
     </div>
-    <div class="foot">建议电脑显示器分辨率为1280*768以上 IE浏览器版本为8.0、9.0、10.0及360浏览器的高速模式浏览</div>
+  </div>
   </div>
 </template>
 
@@ -286,7 +310,9 @@ import {
   getTypeDic,
   humanities,
   incrementHumanitiesViewNumber,
-  operateLikesNumber
+  operateLikesNumber,
+  course,
+  getSubjectCourseDetail
 } from "../../api";
 export default {
   name: "homepage",
@@ -309,10 +335,16 @@ export default {
       createDate: "",
       content: "",
       isCollect: "",
-      videoListId: ""
+      videoListId: "",
+      courseList: "",
+      courseListId: "",
+      description: "",
+      courseId: "",
     };
   },
   created() {
+    this.course();
+    this.getSubjectCourseDetail();
     this.getTypeDic();
     setTimeout(() => {
       this.humanities();
@@ -320,10 +352,29 @@ export default {
     this.incrementHumanitiesViewNumber();
   },
   methods: {
+    handleDetail(){
+         this.$router.push('/details')
+    },
+    course() {
+      course({}).then(res => {
+        if (res.status === 200) {
+          this.courseList = res.data;
+          this.courseListId = this.courseList[1].id;
+          console.log(this.courseListId);
+        }
+      });
+    },
+    getSubjectCourseDetail() {
+      getSubjectCourseDetail({
+        id: this.courseListId
+      }).then(res => {
+        this.description = res.data.description;
+        this.courseId = res.data.id;
+      });
+    },
     //视频跳转
     handleVideo() {
       location.href = this.content;
-      // console.log(this.content)
     },
     demoClick(index) {
       this.tabNum = index;
@@ -350,7 +401,6 @@ export default {
       })
         .then(res => {
           this.videoList = res.data.videoData;
-          console.log(this.videoList[0].title);
           this.peopeList = res.data.otherData;
         })
         .catch(err => {
@@ -388,7 +438,6 @@ export default {
         .then(res => {
           this.videoList = res.data.videoData;
           this.videoListId = this.videoList[0].id;
-          console.log(this.videoListId);
           this.viedo = this.videoList[0].title;
           this.viewNumber = this.videoList[0].viewNumber;
           this.peopeList = res.data.otherData;
@@ -396,21 +445,23 @@ export default {
           this.content = this.videoList[0].content;
           this.isCollect = this.videoList[0].isCollect;
         })
-        .catch(err => {
-          console.log(err);
-        });
+        .catch(err => {});
     },
     incrementHumanitiesViewNumber() {
       incrementHumanitiesViewNumber({
         id: this.videoListId
-      }).then(res => {
-        console.log(res);
-      });
+      }).then(res => {});
     },
     operateLikesNumber() {
-      operateLikesNumber({}).then(res => {
-        console.log(res);
-      });
+      operateLikesNumber({
+        id:
+          this.videoListId ||
+          this.lifeeducation ||
+          this.relationship ||
+          this.fate ||
+          this.emotion ||
+          this.success
+      }).then(res => {});
     }
   }
 };
@@ -420,7 +471,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-left: 60px;
+  margin-left: 95px;
 }
 .viedo {
   width: 562px;
@@ -430,7 +481,7 @@ export default {
   margin-left: -150px;
 }
 .Courseoverview {
-  width: 540px;
+  width: 600px;
   height: 360px;
   margin-left: 19px;
 }
@@ -450,11 +501,11 @@ export default {
   line-height: 26px;
   margin-top: 25px;
 }
-.Courseoverview .title img{
-  width:43px;
-  height:13px;
-  margin-top:7px;
-  margin-left:3px;
+.Courseoverview .title img {
+  width: 43px;
+  height: 13px;
+  margin-top: 7px;
+  margin-left: 3px;
 }
 .Courseoverview p {
   text-indent: 2em;
@@ -495,6 +546,10 @@ export default {
   border-radius: 3px;
   color: #fff;
 }
+/deep/ .video-js {
+  width: 100%;
+  height: 100%;
+}
 .Courseoverview ul li .disc {
   width: 4px;
   height: 4px;
@@ -506,28 +561,13 @@ export default {
   display: flex;
   height: 92px;
   margin-top: 20.5px;
-  margin-left: 370px;
+  margin-left: 340px;
 }
 .teachinglist .teach {
   width: 280px;
   height: 92px;
   background: url(../../assets/home/mao.png) no-repeat;
   background-size: 100% 100%;
-}
-.curriculum {
-  margin-left: 119px;
-  margin-top: 20px;
-  font-size: 26px;
-  font-family: Microsoft YaHei;
-  font-weight: 400;
-  color: rgba(255, 255, 255, 1);
-}
-.see {
-  margin-left: 119px;
-  font-size: 13px;
-  font-family: Microsoft YaHei;
-  font-weight: 400;
-  color: rgba(255, 234, 120, 1);
 }
 .teachinglist .teach1 {
   width: 280px;
@@ -550,8 +590,23 @@ export default {
   background: url(../../assets/home/ce.png) no-repeat;
   background-size: 100% 100%;
 }
+.curriculum {
+  margin-left: 119px;
+  margin-top: 20px;
+  font-size: 26px;
+  font-family: Microsoft YaHei;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 1);
+}
+.see {
+  margin-left: 119px;
+  font-size: 13px;
+  font-family: Microsoft YaHei;
+  font-weight: 400;
+  color: rgba(255, 234, 120, 1);
+}
 .humanities {
-  margin-left: 370px;
+  margin-left: 340px;
 }
 .humanities .top {
   height: 70px;
@@ -565,23 +620,23 @@ export default {
 .humanities .top .ren {
   position: absolute;
   display: flex;
-  margin-top:-25px;
+  margin-top: -25px;
   font-size: 24px;
   font-family: Microsoft YaHei;
   font-weight: bold;
   color: rgba(0, 0, 0, 1);
-  z-index:99;
+  z-index: 99;
 }
 .humanities .top .ren span {
   font-size: 18px;
-  margin-top:10px;
-  margin-left:5px;
+  margin-top: 10px;
+  margin-left: 5px;
 }
-.humanities .top .ren img{
-   width:43px;
-   height:13px;
-   margin-top:20px;
-   margin-left:5px;
+.humanities .top .ren img {
+  width: 43px;
+  height: 13px;
+  margin-top: 20px;
+  margin-left: 5px;
 }
 .humanities .center {
   display: flex;
@@ -591,7 +646,8 @@ export default {
   height: 324px;
   background: rgba(3, 164, 174, 1);
 }
-.humanities .center .classmaterelationship img {
+
+.humanities .center .classmaterelationship .video1 {
   width: 354px;
   height: 212px;
 }
@@ -655,7 +711,7 @@ export default {
   position: relative;
   width: 75%;
   height: 324px;
-  margin-left: 4px;
+  margin-left: -5px;
   background: rgba(248, 248, 248, 1);
 }
 .list {
@@ -741,8 +797,9 @@ export default {
   color: rgba(84, 84, 84, 1);
 }
 .immense {
-  height: 360px;
-  margin-left: 370px;
+  height: 500px;
+  margin-left: 340px;
+ 
 }
 .tit {
   position: absolute;
@@ -754,7 +811,7 @@ export default {
 }
 .tit1 {
   display: flex;
-  margin-left: 40px;
+  margin-left: 10px;
   padding-top: 20px;
   font-size: 24px;
   font-family: Microsoft YaHei;
@@ -762,11 +819,20 @@ export default {
   color: rgba(0, 0, 0, 1);
 }
 .tit1 .xian {
-  width: 512px;
+  width: 490px;
   height: 1px;
   background: rgba(144, 145, 147, 1);
   opacity: 0.47;
-  margin-top: 20px;
+  margin-top: 22px;
+  margin-right: 10px;
+}
+.tit1 .xian1 {
+  width: 525px;
+  height: 1px;
+  background: rgba(144, 145, 147, 1);
+  opacity: 0.47;
+  margin-top: 22px;
+  margin-left: 10px;
 }
 .tit1 img {
   width: 16px;
@@ -917,16 +983,5 @@ export default {
   font-weight: 400;
   color: rgba(84, 84, 84, 1);
   line-height: 35px;
-}
-.foot {
-  margin-top: 31px;
-  height: 53px;
-  line-height: 53px;
-  background: rgba(0, 132, 103, 1);
-  font-size: 13px;
-  font-family: Microsoft YaHei;
-  font-weight: 400;
-  color: rgba(255, 255, 255, 1);
-  text-align: center;
 }
 </style>

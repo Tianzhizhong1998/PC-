@@ -13,7 +13,7 @@
         <div class="Verification">
           <label for>验证码：</label>
           <el-input v-model="verfica"></el-input>
-          <img :src="imgCode" alt @click="changeImgCode" />
+          <img :src="imgCode" alt @click="changeImgCode" width="100px" height="40px" />
         </div>
         <el-button type="primary" @click="handleBtn">登录</el-button>
       </div>
@@ -29,57 +29,74 @@ export default {
       user: "",
       password: "",
       verfica: "",
-      url:"",
-      imgCode:"http://192.168.5.53:8600/ideo-user/user/generateCaptcha"
+      url: "",
+      imgCode: ""
     };
   },
-  created() {
-    this.generateCaptcha();
+  mounted() {
+    this.changeImgCode();
   },
   methods: {
-    doLogin() {
-      const salt = 'sizhengyanxueyuxunlianpingtaiIdeoPOLI';
-      const str =   this.password + salt;
-      this.password = this.$md5(str)
-      doLogin({
-          username:this.user,
-          password:this.password,
-          verifyCode:this.verfica
-      }).then(res => {
-            if(res.status===200){
-              this.$router.push("/home")
-            }else{
-              this.$message(res.message)
-            }
-      }).catch(err=>{
-          console.log(err)
-      });
-    },
-    //生产验证码
-    generateCaptcha() {
-      generateCaptcha({})
-        .then(res => {
-        })
-    },
+    // doLogin() {
+    //   const salt = "sizhengyanxueyuxunlianpingtaiIdeoPOLI";
+    //   const str = this.password + salt;
+    //   this.password = this.$md5(str);
+    //   doLogin({
+    //     username: this.user,
+    //     password: this.password,
+    //     verifyCode: this.verfica
+    //   })
+    //     .then(res => {
+    //       if (res.status === 200) {
+    //         this.$message("欢迎" + this.user + "!");
+    //         this.$router.push("/home");
+    //       } else {
+    //         this.$message("验证码错误");
+    //       }
+    //     })
+    //     .catch(err => {
+    //       console.log(err);
+    //     });
+    // },
+
     //更换验证码
-    changeImgCode(){
-       this.generateCaptcha();
-        const num = Math.ceil(Math.random() * 10) // 生成一个随机数（防止缓存）
-        this.imgCode = 'http://192.168.5.53:8600/ideo-user/user/generateCaptcha?' + num
-  },
-  //登录
-   handleBtn(){
-       if(this.user===""){
-         this.$message("用户名不能为空")
-        }else if(this.password===""){
-          this.$message("密码不能为空")
-        } else if(this.verfica===""){
-           this.$message("验证码不能为空")
-        }
-        else{
-          this.doLogin()
-        }
-  }
+    changeImgCode() {
+      this.$axios
+        .get("/api/ideo-user/user/generateCaptcha", { responseType: "blob" })
+        .then(res => {
+          this.imgCode = window.URL.createObjectURL(res.data);
+        });
+    },
+    //登录
+    handleBtn() {
+      if (this.user === "") {
+        this.$message("用户名不能为空");
+      } else if (this.password === "") {
+        this.$message("密码不能为空");
+      } else if (this.verfica === "") {
+        this.$message("验证码不能为空");
+      } else {
+        const salt = "sizhengyanxueyuxunlianpingtaiIdeoPOLI";
+        const str = this.password + salt;
+        this.password = this.$md5(str);
+        this.$axios({
+          method: "post",
+          url: "/api/ideo-user/security/doLogin",
+          data: this.$qs.stringify({
+            username: this.user,
+            password: this.password,
+            verifyCode: this.verfica
+          })
+        }).then(res => {
+          if (res.data.status == 200) {
+            this.$message("欢迎" + this.user + "!");
+            this.$router.push("/home");
+          } else {
+            this.$message("验证码错误");
+          }
+        });
+      }
+    }
   }
 };
 </script>
