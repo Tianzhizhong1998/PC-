@@ -2,6 +2,7 @@
   <div class="home">
     <div class="asd">
       <span>123232</span>
+      <i>123231231232</i>
     </div>
   </div>
 </template>
