@@ -1,38 +1,30 @@
 <template>
   <div class="home">
-   <div class="asd">123232</div>
+    <div class="asd">
+      <span>123232</span>
+    </div>
   </div>
 </template>
 
 <script>
-import {apiAddress} from '../../api'
+import { apiAddress } from "../../api";
 export default {
   name: "home",
   data() {
-    return {
-       
-    }
+    return {};
   },
-  created(){
-   this.apiAddress()
+  created() {
+    this.apiAddress();
   },
-  methods:{
-     apiAddress(){
-       apiAddress({
-
-       }).then(res=>{
-          
-       })
-     }
-  }
+  methods: {
+    apiAddress() {
+      apiAddress({}).then((res) => {});
+    },
+  },
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style less="less" scoped>
-.asd{
-  width:500px;
-  height:100px;
-  background:pink;
-}
+<style lang="less" scoped>
+@import "../home/index.less";
 </style>

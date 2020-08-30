@@ -23,17 +23,19 @@ exports.cssLoaders = function (options) {
   }
 
 
-  const postcssLoader = {
-    loader: 'postcss-loader',
-    options: {
-      sourceMap: options.sourceMap
-    }
-  }
+  const cssLoader = {
+    loader: 'css-loader',
+     options: {
+       sourceMap: options.sourceMap
+     }
+   }
+  
+  
    // 增加代码，px转rem配置（需要将px2remloader添加进loaders数组中）
    const px2remLoader = {
     loader: 'px2rem-loader',
     options: {
-      remUnit: 192,  //根据视觉稿，rem为px的十分之一，1920px  192 rem
+      remUnit:192,  //根据视觉稿，rem为px的十分之一，1920px  192 rem
       // remPrecision: 8//换算的rem保留几位小数点
     }
   }
